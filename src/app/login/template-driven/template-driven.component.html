@@ -1,27 +1,60 @@
 <h1>Template driven</h1>
 
-<form>
-  <div class="flex-container">
-    <label for="email">Username or Email</label>
+<form #form="ngForm" (ngSubmit)="onSubmit(form)">
+  <div
+    class="flex-container"
+    [ngClass]="{ 'has-error': email.invalid && email.touched }"
+  >
+    <label for="email">Email</label>
     <input
       id="email"
       name="email"
       type="email"
       placeholder="myemail@mail.com"
+      required
+      email
+      ngModel
+      #email="ngModel"
     />
+
+    @if (email.invalid && email.touched) {
+      <p>email input field is required and needs a valid email address</p>
+    }
   </div>
 
-  <div class="flex-container">
+  <div
+    class="flex-container"
+    [ngClass]="{
+      'has-error':
+        form.form.get('password')?.invalid &&
+        form.form.get('password')?.touched,
+    }"
+  >
     <label for="password">Password</label>
     <input
       id="password"
       name="password"
       type="password"
       placeholder="enter your password"
+      ngModel
+      required
+      minlength="6"
+      #password="ngModel"
     />
+
+    @if (password.invalid && password.touched) {
+      <p>password input field is required and needs at least 6 characters</p>
+    }
   </div>
 
-  <button id="login-btn">Log in</button>
+  <button
+    type="submit"
+    id="login-btn"
+    [disabled]="form.form.invalid"
+    [ngClass]="{ disabled: form.form.invalid }"
+  >
+    Log in
+  </button>
 
   <div class="forgot-password">
     <a href="#">Forgot your password?</a>
