@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { map, Subject, switchMap } from 'rxjs';
+import { catchError, map, of, Subject, switchMap } from 'rxjs';
 
 import { dataWrapper, loginData } from './login.interface';
 
@@ -20,9 +20,18 @@ export class LoginService {
 
   login$ = this.loginSubject$.pipe(
     switchMap((data) =>
-      this.httpClient
-        .post<dataWrapper>(`${this.API}/login`, data)
-        .pipe(map((res) => res.data)),
+      this.httpClient.post<dataWrapper>(`${this.API}/login`, data).pipe(
+        catchError((err: HttpErrorResponse) => {
+          console.error('error on login: ', err);
+          return of({
+            data: null,
+            error: {
+              code: err.status,
+              message: err.message,
+            },
+          } as dataWrapper);
+        }),
+      ),
     ),
   );
 }

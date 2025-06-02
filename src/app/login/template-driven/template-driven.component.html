@@ -54,11 +54,21 @@
     [ngClass]="{ disabled: form.form.invalid }"
   >
     Log in
+    <span [ngClass]="{ spinner: showSpinner }"></span>
   </button>
 
   <div class="forgot-password">
     <a href="#">Forgot your password?</a>
   </div>
 
-  @if (login$ | async; as login) {}
+  @if (login$ | async; as login) {
+    @if (login.data) {
+      <p>Login was sucessfull!</p>
+    }
+    @if (login.error) {
+      <div class="has-error">
+        <p>Invalid Credentials. Please, try again.</p>
+      </div>
+    }
+  }
 </form>
